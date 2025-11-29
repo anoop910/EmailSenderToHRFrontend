@@ -1,13 +1,17 @@
 import { useState } from "react";
 
 import "./App.css";
-import VSCodeEditor from "./component/VSCodeEditor";
-
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Dashboard from "./page/Home";
+import SendEmail from "./page/SendEmail";
 function App() {
   return (
-    <>
-      <VSCodeEditor />
-    </>
+   
+      <Routes>
+        <Route path="/" element={<Dashboard />} />
+        <Route path="/send-email" element={<SendEmail />} />
+      </Routes>
+    
   );
 }
 

@@ -6,39 +6,20 @@ import { autocompletion } from "@codemirror/autocomplete";
 import { bracketMatching } from "@codemirror/language";
 import { closeBrackets } from "@codemirror/autocomplete";
 
-export default function SingleEditor() {
-  // Initial boilerplate
-  const [code, setCode] = useState(`<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>My Page</title>
-  <style>
-    body { font-family: Arial; text-align: center; }
-    h1 { color: teal; }
-  </style>
-</head>
-<body>
-  <h1>Hello World</h1>
-  <p>Write your HTML, CSS, JS here!</p>
-  <script>
-    console.log("Hello from JS!");
-  </script>
-</body>
-</html>`);
+export default function CodeEditor({ value, onChange }) {
+  
 
   const [srcDoc, setSrcDoc] = useState("");
 
   // Update iframe preview automatically
   useEffect(() => {
     const timeout = setTimeout(() => {
-      setSrcDoc(code);
+      setSrcDoc(value);
     }, 300);
 
     return () => clearTimeout(timeout);
     
-  }, [code]);
+  }, [value]);
 
   
   return (
@@ -48,11 +29,11 @@ export default function SingleEditor() {
       <div style={{ width: "50%", padding: "10px", overflowY: "scroll", marginBottom: "10px", backgroundColor: "#1e1e1e" }}>
         <h3 style={{ color: "white" }}>HTML + CSS + JS Editor</h3>
         <CodeMirror
-          value={code}
+          value={value}
           height="100%"
           theme={oneDark}
           extensions={[html(), autocompletion(), bracketMatching(), closeBrackets()]}
-          onChange={(value) => setCode(value)}
+          onChange={onChange}
         />
       </div>
 
