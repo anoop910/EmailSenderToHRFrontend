@@ -4,13 +4,18 @@ import Sidebar from "../component/Sidebar";
 
 const DashboardLayout = ({ children }) => {
   return (
-    <div>
+    <div className="h-screen flex flex-col">
+      {/* Navbar */}
       <Navbar />
 
-      <div className="flex">
+      <div className="flex flex-1 overflow-hidden">
+        {/* Sidebar */}
         <Sidebar />
 
-        <main className="mt-4 w-full px-6">{children}</main>
+        {/* Main Content Scroll Area */}
+        <main className="mt-4 w-full px-6 overflow-y-auto h-full pb-10">
+          {children}
+        </main>
       </div>
     </div>
   );
