@@ -21,7 +21,7 @@ const TemplatesPage = () => {
           <h2 className="text-3xl font-semibold mb-4">Email Templates</h2>
 
           {/* Search + Add button */}
-          <div className="flex justify-between mb-6">
+          <div className="flex justify-between mr-6 mb-6">
             <input
               type="text"
               placeholder="Search templates..."

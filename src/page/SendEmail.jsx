@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import DashboardLayout from "../Layout/DashboardLayout";
 import CodeEditor from "../component/CodeEditor";
+import { emailService } from "../Service/emailService";
 
 const SendEmail = () => {
-  // Initial boilerplate
-    const [code, setCode] = useState(`<!DOCTYPE html>
+  const [email, setEmail] = useState("");
+  const [subject, setSubject] = useState("");
+  const [code, setCode] = useState(`<!DOCTYPE html>
   <html lang="en">
   <head>
     <meta charset="UTF-8">
@@ -26,6 +28,25 @@ const SendEmail = () => {
     </script>
   </body>
   </html>`);
+  const data = {
+    toEmail: email,
+    subject: subject,
+    body: code,
+  };
+
+  const handleSendEmail = () => {
+    console.log("data come",data);
+    
+    emailService(data)
+      .then((res) => {
+        console.log("Email sent successfully:", res);
+        alert("Email sent successfully!");
+      })
+      .catch((err) => {
+        console.error("Error sending email:", err);
+        alert("Failed to send email.");
+      });
+  }
   
 
   return (
@@ -36,6 +57,8 @@ const SendEmail = () => {
         <label className="block mb-2 font-semibold">To:</label>
         <input
           type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
           placeholder="Enter user email"
           className="w-full p-3 border rounded mb-4"
         />
@@ -43,6 +66,8 @@ const SendEmail = () => {
         <label className="block mb-2 font-semibold">Subject:</label>
         <input
           type="text"
+          value={subject}
+          onChange={(e) => setSubject(e.target.value)}
           placeholder="Email subject"
           className="w-full p-3 border rounded mb-4"
         />
@@ -51,7 +76,7 @@ const SendEmail = () => {
       <h2 className="text-xl font-semibold mb-3">HTML Body</h2>
       <CodeEditor value={code} onChange={setCode} />
 
-      <button className="mt-6 bg-blue-600 text-white px-6 py-3 rounded-lg shadow hover:bg-blue-700">
+      <button onClick={handleSendEmail} className="mt-6 bg-blue-600 text-white px-6 py-3 rounded-lg shadow hover:bg-blue-700">
         Send Email
       </button>
     </DashboardLayout>
