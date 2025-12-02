@@ -2,10 +2,18 @@ import React, { useState } from "react";
 import DashboardLayout from "../Layout/DashboardLayout";
 import CodeEditor from "../component/CodeEditor";
 import { emailService } from "../Service/emailService";
+import Loader from "../component/Loader";
+import TemplateList from "../component/templateList";
+import TemplateCardList from "../component/TemplateCardList";
+import { getTemplateByIdService } from "../Service/templateService";
 
 const SendEmail = () => {
+  const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
+  const [bcc, setBcc] = useState("");
+  const [cc, setCc] = useState("");
   const [subject, setSubject] = useState("");
+  const [templateList, setTemplateList] = useState(false);
   const [code, setCode] = useState(`<!DOCTYPE html>
   <html lang="en">
   <head>
@@ -31,21 +39,36 @@ const SendEmail = () => {
   const data = {
     toEmail: email,
     subject: subject,
+    bcc: bcc,
+    cc: cc,
     body: code,
   };
 
   const handleSendEmail = () => {
-    console.log("data come",data);
+    setLoading(true);
     
     emailService(data)
       .then((res) => {
         console.log("Email sent successfully:", res);
-        alert("Email sent successfully!");
+        setLoading(false);
       })
       .catch((err) => {
         console.error("Error sending email:", err);
-        alert("Failed to send email.");
+        setLoading(false);
       });
+  }
+
+  const handleUseTemplate = () => {
+    setTemplateList(true);
+  }
+
+  const handletemplateselect = (id) => {
+    getTemplateByIdService(id).then((data) => {
+      setCode(data.templateCode);
+    }).catch((error) => {
+      console.error("Failed to fetch template by id:", error);
+    });
+    
   }
   
 
@@ -59,7 +82,25 @@ const SendEmail = () => {
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          placeholder="Enter user email"
+          placeholder="Enter To email"
+          className="w-full p-3 border rounded mb-4"
+        />
+
+        <label className="block mb-2 font-semibold">BCC:</label>
+        <input
+          type="email"
+          value={bcc}
+          onChange={(e) => setBcc(e.target.value)}
+          placeholder="Enter Bcc email"
+          className="w-full p-3 border rounded mb-4"
+        />
+
+        <label className="block mb-2 font-semibold">CC:</label>
+        <input
+          type="email"
+          value={cc}
+          onChange={(e) => setCc(e.target.value)}
+          placeholder="Enter CC email"
           className="w-full p-3 border rounded mb-4"
         />
 
@@ -72,12 +113,19 @@ const SendEmail = () => {
           className="w-full p-3 border rounded mb-4"
         />
       </div>
+      <div className="bg-white p-6 rounded-xl shadow mb-10">
+        <button onClick={handleUseTemplate} className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 mb-5">
+          Use Template
+        </button>
+        {templateList ? <TemplateCardList onSelect={handletemplateselect} /> : null}
+      </div>
+      
 
       <h2 className="text-xl font-semibold mb-3">HTML Body</h2>
       <CodeEditor value={code} onChange={setCode} />
 
       <button onClick={handleSendEmail} className="mt-6 bg-blue-600 text-white px-6 py-3 rounded-lg shadow hover:bg-blue-700">
-        Send Email
+         {loading? <Loader /> : "Send Email"}
       </button>
     </DashboardLayout>
   );

@@ -14,7 +14,7 @@ const Sidebar = () => {
           Templates
         </NavLink>
         <NavLink className="hover:bg-gray-700 p-3 rounded" to="/emails">
-          Email Logs
+          Emails
         </NavLink>
         <NavLink className="hover:bg-gray-700 p-3 rounded" to="/users">
           Users
