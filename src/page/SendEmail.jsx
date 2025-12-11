@@ -5,13 +5,17 @@ import { emailService } from "../Service/emailService";
 import Loader from "../component/Loader";
 import TemplateList from "../component/templateList";
 import TemplateCardList from "../component/TemplateCardList";
-import { getTemplateByIdService } from "../Service/templateService";
+import {
+  deleteTemplateService,
+  getTemplateByIdService,
+} from "../Service/templateService";
 
 const SendEmail = () => {
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [bcc, setBcc] = useState("");
   const [cc, setCc] = useState("");
+  const [attachments, setAttachments] = useState(null);
   const [subject, setSubject] = useState("");
   const [templateList, setTemplateList] = useState(false);
   const [code, setCode] = useState(`<!DOCTYPE html>
@@ -43,11 +47,24 @@ const SendEmail = () => {
     cc: cc,
     body: code,
   };
+ 
+
+  const formData = new FormData();
+
+  // Append JSON as a string
+  formData.append("sendEmailReq", JSON.stringify(data));
+  ;
+  
+
+  // Append file
+  formData.append("file", attachments);
 
   const handleSendEmail = () => {
     setLoading(true);
+    console.log(attachments);
     
-    emailService(data)
+
+    emailService(formData)
       .then((res) => {
         console.log("Email sent successfully:", res);
         setLoading(false);
@@ -56,21 +73,43 @@ const SendEmail = () => {
         console.error("Error sending email:", err);
         setLoading(false);
       });
-  }
+  };
 
   const handleUseTemplate = () => {
     setTemplateList(true);
-  }
+  };
 
   const handletemplateselect = (id) => {
-    getTemplateByIdService(id).then((data) => {
-      setCode(data.templateCode);
-    }).catch((error) => {
-      console.error("Failed to fetch template by id:", error);
-    });
-    
-  }
-  
+    getTemplateByIdService(id)
+      .then((data) => {
+        setCode(data.templateCode);
+      })
+      .catch((error) => {
+        console.error("Failed to fetch template by id:", error);
+      });
+  };
+
+  const handletemplateEdit = (id) => {
+    getTemplateByIdService(id)
+      .then((data) => {
+        setCode(data.templateCode);
+      })
+      .catch((error) => {
+        console.error("Failed to fetch template by id:", error);
+      });
+  };
+
+  const deleteTemplate = (id) => {
+    setTemplateList(false);
+    deleteTemplateService(id)
+      .then((data) => {
+        console.log("Template deleted successfully:", data);
+        handleUseTemplate();
+      })
+      .catch((error) => {
+        console.error("Failed to delete template:", error);
+      });
+  };
 
   return (
     <DashboardLayout>
@@ -103,6 +142,14 @@ const SendEmail = () => {
           placeholder="Enter CC email"
           className="w-full p-3 border rounded mb-4"
         />
+        <label className="block mb-2 font-semibold">Attachments:</label>
+        <input
+          type="file"
+          accept="application/pdf"
+          id="#inputFile"
+          onChange={(e) => setAttachments(e.target.files[0])}
+          className="w-full p-3 border rounded mb-4"
+        />
 
         <label className="block mb-2 font-semibold">Subject:</label>
         <input
@@ -114,18 +161,29 @@ const SendEmail = () => {
         />
       </div>
       <div className="bg-white p-6 rounded-xl shadow mb-10">
-        <button onClick={handleUseTemplate} className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 mb-5">
+        <button
+          onClick={handleUseTemplate}
+          className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 mb-5"
+        >
           Use Template
         </button>
-        {templateList ? <TemplateCardList onSelect={handletemplateselect} /> : null}
+        {templateList ? (
+          <TemplateCardList
+            onSelect={handletemplateselect}
+            onDelete={deleteTemplate}
+            onEdit={handletemplateEdit}
+          />
+        ) : null}
       </div>
-      
 
       <h2 className="text-xl font-semibold mb-3">HTML Body</h2>
       <CodeEditor value={code} onChange={setCode} />
 
-      <button onClick={handleSendEmail} className="mt-6 bg-blue-600 text-white px-6 py-3 rounded-lg shadow hover:bg-blue-700">
-         {loading? <Loader /> : "Send Email"}
+      <button
+        onClick={handleSendEmail}
+        className="mt-6 bg-blue-600 text-white px-6 py-3 rounded-lg shadow hover:bg-blue-700"
+      >
+        {loading ? <Loader /> : "Send Email"}
       </button>
     </DashboardLayout>
   );

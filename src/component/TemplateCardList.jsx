@@ -6,13 +6,15 @@ import TemplateCard from "./TemplateCard";
 import DashboardLayout from "../Layout/DashboardLayout";
 import { getTemplatesService } from "../Service/templateService";
 
-const TemplateCardList = ({ onSelect = () => {} }) => {
+const TemplateCardList = ({ onSelect = () => {}, onDelete = () => {}, onEdit = () => {} }) => {
   const [templates, setTemplates] = useState([]);
 
   useEffect(() => {
     getTemplatesService()
       .then((data) => {
         setTemplates(data);
+        console.log(data);
+        
       })
       .catch((error) => {
         console.error("Failed to fetch templates:", error);
@@ -25,8 +27,8 @@ const TemplateCardList = ({ onSelect = () => {} }) => {
           <TemplateCard
             key={t.id}
             title={t.title}
-            onEdit={() => console.log("Edit", t.id)}
-            onDelete={() => console.log("Delete", t.id)}
+            onEdit={() => onEdit(t.id)}
+            onDelete={() => onDelete(t.id)}
             onUse={() => onSelect(t.id)}
           />
         ))}

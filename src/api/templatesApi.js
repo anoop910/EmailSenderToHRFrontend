@@ -12,3 +12,11 @@ export const getTemplates = async () => {
 export const getTemplateById = async (id) => {
     return axios.get(`/template/code${id}`);
 }
+
+export const deleteTemplate = async (id) => {
+    return axios.delete(`/template/delete${id}`);
+}
+
+export const editTemplate = async (id, data) => {
+    return axios.put(`/template/edit${id}`, data);
+}   

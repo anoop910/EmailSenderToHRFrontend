@@ -1,4 +1,4 @@
-import { getTemplateById, getTemplates, saveTemplate } from "../api/templatesApi";
+import { deleteTemplate, editTemplate, getTemplateById, getTemplates, saveTemplate } from "../api/templatesApi";
 
 export const saveTemplateService = async (payload) =>{
     try {
@@ -22,6 +22,7 @@ export const getTemplatesService = async () => {
     }
 }
 
+
 export const getTemplateByIdService = async (id) => {
     try {
         const response = await getTemplateById(id);
@@ -31,3 +32,23 @@ export const getTemplateByIdService = async (id) => {
         throw error;
     }
 }
+
+export const deleteTemplateService = async (id) => {
+    try {
+        const response = await deleteTemplate(id);
+        return response.data;
+    } catch (error) {
+        console.error("delete template some error : ", error);
+        throw error;
+    }
+}
+
+export const editTemplateService = async (id, payload) => {
+    try {
+        const response = await editTemplate(id, payload);
+        return response.data;
+    } catch (error) {
+        console.error("edit template some error : ", error);
+        throw error;
+    }  
+        }
